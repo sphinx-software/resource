@@ -1,10 +1,6 @@
-import * as React from 'react'
-import styles from './styles.module.css'
+import { Resource, Operation } from './Contracts'
+import resource from './resource'
+import useResource from './useResource'
+import useResourceState from './useResourceState'
 
-interface Props {
-  text: string
-}
-
-export const ExampleComponent = ({ text }: Props) => {
-  return <div className={styles.test}>Example Component: {text}</div>
-}
+export { Resource, Operation, resource, useResource, useResourceState }
