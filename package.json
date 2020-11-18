@@ -1,5 +1,6 @@
 {
   "name": "@sphinx-software/resource",
+  "private": false,
   "version": "1.0.0",
   "description": "Made with create-react-library",
   "author": "monkey-programmer",
