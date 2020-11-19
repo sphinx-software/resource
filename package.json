@@ -61,5 +61,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "events": "^3.2.0"
+  }
 }

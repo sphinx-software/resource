@@ -1,13 +1,24 @@
-import { Resource, Operation } from './Contracts'
+import { Resource, Operation, Executor } from './Contracts'
 import { useCallback, useState } from 'react'
 import resource from './resource'
 
-type Executor<P> = (parameters: P) => void
+function resolveOperation<P, D>(
+  operation: Operation<P, D> | Executor<P, D>
+): Operation<P, D> {
+  return typeof operation === 'function'
+    ? {
+        execute: operation
+      }
+    : operation
+}
 
-export default function useResource<Parameters, Data>({
-  initial,
-  execute
-}: Operation<Parameters, Data>): [Resource<Data>, Executor<Parameters>] {
+type DeferredExecutor<P> = (parameters: P) => void
+
+export default function useResource<Parameters, Data>(
+  operation: Operation<Parameters, Data> | Executor<Parameters, Data>
+): [Resource<Data>, DeferredExecutor<Parameters>] {
+  const { initial, execute } = resolveOperation(operation)
+
   const [resourceInstance, setResourceInstance] = useState<Resource<Data>>(
     initial
       ? resource(Promise.resolve(initial))
@@ -16,7 +27,15 @@ export default function useResource<Parameters, Data>({
 
   const executor = useCallback(
     (parameters: Parameters) => {
-      setResourceInstance(resource(execute(parameters)))
+      const instance: Resource<Data> = resource(
+        execute(parameters, (handler) => {
+          setTimeout(() => {
+            instance.onCancel(handler)
+          }, 0)
+        })
+      )
+
+      setResourceInstance(instance)
     },
     [execute]
   )

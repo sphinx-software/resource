@@ -1,4 +1,4 @@
-import { Operation } from '../../src'
+import { Executor } from '@sphinx-software/resource'
 
 export type User = {
   name: string
@@ -9,22 +9,26 @@ export type UserSearchCondition = {
   keyword: string
 }
 
-const wait = (ms: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
+export const GET_PROFILE: Executor<UserSearchCondition, User> = (
+  condition,
+  onCancel
+) => {
+  console.log(condition)
 
-export const GET_PROFILE: Operation<UserSearchCondition, User> = {
-  initial: {
-    name: 'Lucy',
-    age: 25
-  },
-  async execute() {
-    await wait(1000)
-    return {
-      name: 'Rikky',
-      age: 30
-    }
-  }
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      resolve({
+        name: 'Rikky',
+        age: 30
+      })
+    }, 1000)
+
+    onCancel(() => {
+      clearTimeout(timeout)
+      resolve({
+        name: 'Luffy - Just in case',
+        age: 25
+      })
+    })
+  })
 }

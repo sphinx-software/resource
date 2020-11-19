@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import {
   Resource,
   useResource,
@@ -15,6 +15,7 @@ const App = () => {
   const [userResource, execute] = useResource(GET_PROFILE)
   const { error, loading, result } = useResourceState(userResource)
 
+  useEffect(() => execute({ keyword: 'rikky' }), [execute])
   return (
     <div>
       <Suspense fallback='Loading...'>
@@ -27,6 +28,7 @@ const App = () => {
 
       <div>
         <button onClick={() => execute({ keyword: 'rikky' })}>Load</button>
+        <button onClick={() => userResource.cancel()}>Cancel</button>
       </div>
       <ul>
         <li>

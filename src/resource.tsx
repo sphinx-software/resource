@@ -1,6 +1,11 @@
-import { Resource } from './Contracts'
+import { CancelHandler, CancellableResource, Resource } from './Contracts'
+import { EventEmitter } from 'events'
 
-export default function resource<Data>(promise: Promise<Data>): Resource<Data> {
+export default function resource<Data>(
+  promise: Promise<Data>
+): Resource<Data> & CancellableResource {
+  const ee = new EventEmitter()
+
   let _result: Data
   let _error: Error | null = null
   let loading = true
@@ -22,6 +27,16 @@ export default function resource<Data>(promise: Promise<Data>): Resource<Data> {
       }
 
       return _result
+    },
+    onCancel(handler: CancelHandler): void {
+      ee.on('cancelled', handler)
+    },
+    cancel(error: Error | null = null): void {
+      if (loading) {
+        _error = error
+        loading = false
+        ee.emit('cancelled', error)
+      }
     }
   }
 }
