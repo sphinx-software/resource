@@ -128,6 +128,26 @@ const { error, loading, result } = useResourceState(userResource)
 
 ```
 
+
+### Canceling the operation
+
+We eventually want to cancel the operation while it is executing.
+In operation definition, we can archive it by registering the cancel callback.
+
+```tsx
+export const WAIT: Operation<number, void> = {
+  execute(ms, onCancel) {
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(), ms)
+
+      onCancel(() => {
+        clearTimeout(timeout)
+      })
+    })
+  }
+}
+```
+
 That's it! Happy coding! ❤️
 
 ## License
