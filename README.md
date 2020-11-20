@@ -129,7 +129,7 @@ const { error, loading, result } = useResourceState(userResource)
 ```
 
 
-### Canceling the operation
+## Canceling the operation
 
 We eventually want to cancel the operation while it is executing.
 In operation definition, we can archive it by registering the cancel callback.
@@ -147,6 +147,27 @@ export const WAIT: Operation<number, void> = {
   }
 }
 ```
+
+```tsx
+
+///
+export default () => {
+  const [waitingResource, fetch] = useResource(WAIT)
+  
+  
+  return (
+    <div>
+      <button onClick={() => fetch()}>Wait for it</button>
+      <button onClick={() => waitingResource.cancel() }>Cancel</button>
+    </div>
+  )
+}
+```
+
+You can pass an error or error message into the `cancel()` method. 
+The `fetch()` will throw the given error.
+
+If you there are no error message provided, the resource will continue to suspended.
 
 That's it! Happy coding! ❤️
 
